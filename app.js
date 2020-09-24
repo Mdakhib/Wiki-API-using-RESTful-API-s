@@ -17,7 +17,7 @@ app.use(express.static("public"));
 mongoose.connect("mongodb://localhost:27017/wikiDB", {
     useNewUrlParser: true,
     useUnifiedTopology: true
-})
+});
 
 const articleSchema = {
     title: String,
@@ -37,7 +37,7 @@ app.route("/articles")
                 res.send(err)
             }
 
-        })
+        });
     })
     .post((req, res) => {
         const newArticle = new Article({
@@ -50,7 +50,7 @@ app.route("/articles")
             } else {
                 res.send(err)
             }
-        })
+        });
     })
     .delete((req, res) => {
         Article.deleteMany(err => {
@@ -75,8 +75,32 @@ app.route("/articles/:articleTitle")
                 console.log("No atricles matching that Title was found");
             }
         });
+    })
+    .put((req, res) => {
+        Article.update(
+            { title: req.params.articleTitle },
+            { title: req.body.title, content: req.body.content },
+            { overwrite: true },
+            (err => {
+                if (!err) {
+                    res.send("successfully updated article.")
+                }
+            })
+        );
+    })
+    .patch((req, res) => {
+        Article.update(
+            { title: req.params.articleTitle },
+            { $set: req.body },
+            (err => {
+                if (!err) {
+                    res.send("Successfully updated article")
+                } else {
+                    res.send(err)
+                }
+            })
+        );
     });
-
 
 app.listen(3000, function () {
     console.log("Server started on port 3000");
