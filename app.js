@@ -26,40 +26,40 @@ const articleSchema = {
 
 const Article = mongoose.model("Article", articleSchema);
 
-app.get("/articles", function (req, res) {
-    Article.find(function (err, foundArticles) {
-        if (!err){
-           res.send(foundArticles);
-        } else {
-            res.send(err)
-        }
-        
-    })
-})
+app.route("/articles")
+    .get(function (req, res) {
+        Article.find(function (err, foundArticles) {
+            if (!err) {
+                res.send(foundArticles);
+            } else {
+                res.send(err)
+            }
 
-app.post("/articles", (req, res) => {
-    const newArticle = new Article({
-        title: req.body.title,
-        content: req.body.content
-    });
-    newArticle.save(function (err) {
-        if (!err) {
-            res.send("Successfully added a new article")
-        } else {
-            res.send(err)
-        }
+        })
     })
-});
+    .post((req, res) => {
+        const newArticle = new Article({
+            title: req.body.title,
+            content: req.body.content
+        });
+        newArticle.save(function (err) {
+            if (!err) {
+                res.send("Successfully added a new article")
+            } else {
+                res.send(err)
+            }
+        })
+    })
+    .delete((req, res) => {
+        Article.deleteMany(err => {
+            if (!err) {
+                res.send("Successfully deleted all articles.")
+            } else {
+                res.send(err)
+            }
+        })
+    })
 
-app.delete("/articles", (req, res) => {
-    Article.deleteMany(err => {
-        if (!err) {
-            res.send("Successfully deleted all articles.")
-        } else {
-            res.send(err)
-        }
-    })
-})
 
 
 
